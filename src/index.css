@@ -182,10 +182,10 @@ body {
 /* ── App Shell ── */
 #app-shell {
   display: none;
-  background: var(--surface-bg);
+  background: var(--bg-deep);
   min-height: 100vh;
-  color: var(--text-primary);
-  font-family: system-ui, sans-serif;
+  color: var(--ui-black);
+  font-family: var(--font-main);
 }
 
 #chrome {
@@ -193,62 +193,71 @@ body {
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
 }
 
 #chrome button {
   cursor: pointer;
-  background: #21262d;
-  color: var(--text-primary);
-  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--ui-black);
+  border: 1px solid var(--glass-border);
   border-radius: 6px;
   padding: 0.35rem 0.75rem;
   font-size: 0.85rem;
+  font-family: var(--font-mono);
   white-space: nowrap;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+#chrome button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.25);
 }
 
 #chrome button:disabled {
-  opacity: 0.45;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
 #btn-skip {
-  color: var(--text-muted);
+  color: var(--ui-grey);
 }
 
 #btn-signout {
   margin-left: auto;
   background: transparent;
-  border-color: var(--border);
-  color: var(--text-muted);
+  border-color: var(--glass-border);
+  color: var(--ui-grey);
   font-size: 0.8rem;
 }
 
 #btn-signout:hover {
-  color: var(--text-primary);
-  border-color: var(--text-muted);
+  color: var(--ui-black);
+  border-color: rgba(0, 0, 0, 0.3);
 }
 
 #task-meta {
   flex: 1;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--text-secondary);
+  color: var(--ui-grey);
 }
 
 #status {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--ui-grey);
   white-space: nowrap;
 }
 
 #progress-bar-wrap {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.7);
+  border-bottom: 1px solid var(--glass-border);
   padding: 0 1rem 0.5rem;
   display: flex;
   align-items: center;
@@ -257,8 +266,8 @@ body {
 
 #progress-track {
   flex: 1;
-  height: 4px;
-  background: var(--border);
+  height: 3px;
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -266,14 +275,15 @@ body {
 #progress-fill {
   height: 100%;
   width: 0%;
-  background: var(--accent);
+  background: var(--ui-black);
   border-radius: 2px;
   transition: width 0.3s ease;
 }
 
 #progress-text {
   font-size: 0.78rem;
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  color: var(--ui-grey);
   white-space: nowrap;
 }
 

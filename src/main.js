@@ -33,15 +33,15 @@ let completedTaskIds = new Set();
 function setStatus(text, isError = false) {
   const el = document.getElementById('status');
   el.textContent = text;
-  el.style.color = isError ? '#f85149' : '#8b949e';
+  el.style.color = isError ? '#c0392b' : '#666666';
 }
 
 function showBanner(text, isError = false) {
   const banner = document.getElementById('save-banner');
   banner.textContent = text;
-  banner.style.background = isError ? '#3d1a1a' : '#0d2b1a';
-  banner.style.color = isError ? '#f85149' : '#3fb950';
-  banner.style.borderColor = isError ? '#f85149' : '#3fb950';
+  banner.style.background = isError ? '#fff0f0' : '#f0faf4';
+  banner.style.color = isError ? '#c0392b' : '#1a7a3a';
+  banner.style.borderColor = isError ? '#c0392b' : '#1a7a3a';
   banner.style.opacity = '1';
   clearTimeout(banner._timer);
   banner._timer = setTimeout(() => {
@@ -112,7 +112,7 @@ function mountStudio(task) {
   root.replaceChildren();
   if (!task || !task.data?.audio) {
     root.innerHTML =
-      '<p style="padding:1rem;color:#8b949e;">No task or missing <code>data.audio</code> URL.</p>';
+      '<p style="padding:1rem;color:#666666;font-family:var(--font-mono);">No task or missing <code>data.audio</code> URL.</p>';
     return;
   }
   studio = new LabelStudio('root', {
@@ -175,7 +175,7 @@ async function startApp() {
   } catch (e) {
     setStatus(e.message || 'Failed to load tasks', true);
     document.getElementById('root').innerHTML = `
-      <p style="padding:1rem;max-width:42rem;line-height:1.5;color:#e6edf3;">
+      <p style="padding:1rem;max-width:42rem;line-height:1.5;color:#333333;font-family:var(--font-mono);">
         Could not load tasks. Start the API (<code>python -m uvicorn main:app --reload --port 8000</code> from <code>server/</code>)
         or place <code>public/tasks.json</code> for static hosting.
       </p>`;
@@ -184,7 +184,7 @@ async function startApp() {
   if (tasks.length === 0) {
     setStatus('No tasks', true);
     document.getElementById('root').innerHTML =
-      '<p style="padding:1rem;color:#8b949e;">Add tasks to <code>tasks.json</code> (see README).</p>';
+      '<p style="padding:1rem;color:#666666;font-family:var(--font-mono);">Add tasks to <code>tasks.json</code> (see README).</p>';
     return;
   }
 

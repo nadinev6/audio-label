@@ -4,9 +4,6 @@
       "id": "demo-1",
       "data": {
         "audio": "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3"
-      },
-      "meta": {
-        "note": "Replace URLs in tasks.json with your hosted audio (mind CORS)."
       }
     }
   ]
