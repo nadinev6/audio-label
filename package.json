@@ -1,0 +1,22 @@
+{
+  "name": "audio-label",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nadinev6/audio-label.git"
+  },
+  "description": "Minimal audio labeling UI (embeds @heartexlabs/label-studio) plus optional JSONL export API",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@heartexlabs/label-studio": "1.4.0"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}

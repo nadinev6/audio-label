@@ -1,0 +1,13 @@
+audio-label
+
+Copyright 2026 nadinev6
+
+This project depends on the Label Studio frontend NPM package:
+
+- @heartexlabs/label-studio (see package.json for version)
+  SPDX-License-Identifier: Apache-2.0
+  Copyright (c) Heartex Labs
+  https://github.com/HumanSignal/label-studio-frontend
+
+The upstream package is licensed under the Apache License, Version 2.0.
+A copy of that license is included in this repository as LICENSE.

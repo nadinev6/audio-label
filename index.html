@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio label</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #0f1419;
+        color: #e6edf3;
+      }
+      #chrome {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #30363d;
+        background: #161b22;
+      }
+      #chrome button {
+        cursor: pointer;
+        background: #21262d;
+        color: #e6edf3;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 0.35rem 0.75rem;
+      }
+      #chrome button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      #task-meta {
+        flex: 1;
+        font-size: 0.9rem;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      #status {
+        font-size: 0.85rem;
+        color: #8b949e;
+      }
+      #root {
+        min-height: calc(100vh - 48px);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chrome">
+      <button type="button" id="btn-prev" aria-label="Previous task">Prev</button>
+      <button type="button" id="btn-next" aria-label="Next task">Next</button>
+      <div id="task-meta"></div>
+      <div id="status"></div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
