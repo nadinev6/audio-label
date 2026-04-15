@@ -1,4 +1,13 @@
-# audio-label
+<div align="center">
+  <img src="github.jpg" alt="Audio Label" width="100%" />
+  <p><strong>Audio Label</strong></p>
+  <p>
+    <a href="https://github.com/nadinev6/audio-label/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nadinev6/audio-label" alt="License" /></a>
+    <a href="https://github.com/nadinev6/audio-label"><img src="https://img.shields.io/badge/source-GitHub-181717?logo=github" alt="Source on GitHub" /></a>
+    <img src="https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white" alt="Node.js 20+" />
+    <img src="https://img.shields.io/badge/python-%3E%3D3.10-3776AB?logo=python&logoColor=white" alt="Python 3.10+" />
+  </p>
+</div>
 
 Small self-hosted **audio-only** labeling shell: [Label Studio](https://labelstud.io/) embedded in the browser (`@heartexlabs/label-studio`) plus an optional **FastAPI** service that serves `public/tasks.json` and appends submissions to `data/annotations.jsonl` for your downstream pipeline.
 
