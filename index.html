@@ -15,6 +15,94 @@
         background: #0f1419;
         color: #e6edf3;
       }
+
+      /* ── Login overlay ── */
+      #login-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: #0f1419;
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+      }
+      #login-card {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 2.5rem 2rem;
+        width: 100%;
+        max-width: 360px;
+      }
+      #login-card h1 {
+        margin: 0 0 0.25rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #e6edf3;
+      }
+      #login-card p {
+        margin: 0 0 1.75rem;
+        font-size: 0.85rem;
+        color: #8b949e;
+      }
+      #login-form label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #c9d1d9;
+        margin-bottom: 0.35rem;
+      }
+      #login-form input {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        background: #0f1419;
+        color: #e6edf3;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      #login-form input:focus {
+        border-color: #3fb950;
+      }
+      #btn-signin {
+        display: block;
+        width: 100%;
+        padding: 0.55rem;
+        background: #238636;
+        color: #fff;
+        border: 1px solid #2ea043;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      #btn-signin:hover:not(:disabled) {
+        background: #2ea043;
+      }
+      #btn-signin:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      #login-error {
+        display: none;
+        margin-top: 0.85rem;
+        padding: 0.5rem 0.75rem;
+        background: #3d1a1a;
+        border: 1px solid #f85149;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        color: #f85149;
+      }
+
+      /* ── App shell ── */
+      #app-shell {
+        display: none;
+      }
       #chrome {
         display: flex;
         align-items: center;
@@ -39,6 +127,17 @@
       }
       #btn-skip {
         color: #8b949e;
+      }
+      #btn-signout {
+        margin-left: auto;
+        background: transparent;
+        border-color: #30363d;
+        color: #8b949e;
+        font-size: 0.8rem;
+      }
+      #btn-signout:hover {
+        color: #e6edf3;
+        border-color: #8b949e;
       }
       #task-meta {
         flex: 1;
@@ -101,18 +200,39 @@
     </style>
   </head>
   <body>
-    <div id="chrome">
-      <button type="button" id="btn-prev" aria-label="Previous task">Prev</button>
-      <button type="button" id="btn-next" aria-label="Next task">Next</button>
-      <button type="button" id="btn-skip" aria-label="Skip task">Skip</button>
-      <div id="task-meta"></div>
-      <div id="status"></div>
+    <!-- Login overlay -->
+    <div id="login-overlay">
+      <div id="login-card">
+        <h1>Audio Label</h1>
+        <p>Sign in with your invited account to continue.</p>
+        <form id="login-form" autocomplete="on" novalidate>
+          <label for="login-email">Email</label>
+          <input id="login-email" type="email" name="email" autocomplete="email" required placeholder="you@example.com" />
+          <label for="login-password">Password</label>
+          <input id="login-password" type="password" name="password" autocomplete="current-password" required placeholder="••••••••" />
+          <button id="btn-signin" type="submit">Sign in</button>
+          <div id="login-error"></div>
+        </form>
+      </div>
     </div>
-    <div id="progress-bar-wrap">
-      <div id="progress-track"><div id="progress-fill"></div></div>
-      <div id="progress-text">0 / 0 annotated</div>
+
+    <!-- App shell (hidden until authenticated) -->
+    <div id="app-shell">
+      <div id="chrome">
+        <button type="button" id="btn-prev" aria-label="Previous task">Prev</button>
+        <button type="button" id="btn-next" aria-label="Next task">Next</button>
+        <button type="button" id="btn-skip" aria-label="Skip task">Skip</button>
+        <div id="task-meta"></div>
+        <div id="status"></div>
+        <button type="button" id="btn-signout">Sign out</button>
+      </div>
+      <div id="progress-bar-wrap">
+        <div id="progress-track"><div id="progress-fill"></div></div>
+        <div id="progress-text">0 / 0 annotated</div>
+      </div>
+      <div id="root"></div>
     </div>
-    <div id="root"></div>
+
     <div id="save-banner"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

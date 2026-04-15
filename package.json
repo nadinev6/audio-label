@@ -14,7 +14,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@heartexlabs/label-studio": "1.4.0"
+    "@heartexlabs/label-studio": "1.4.0",
+    "@supabase/supabase-js": "^2.103.1"
   },
   "devDependencies": {
     "vite": "^6.3.5"

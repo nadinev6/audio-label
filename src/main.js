@@ -1,5 +1,6 @@
 import LabelStudio from '@heartexlabs/label-studio';
 import '@heartexlabs/label-studio/build/static/css/main.css';
+import { initAuth, getAccessToken } from './auth.js';
 
 const EXPORT_VERSION = 1;
 const SESSION_KEY = 'audio-label-index';
@@ -67,9 +68,18 @@ function taskMetaLine(task) {
   return parts.join(' · ');
 }
 
+async function authedFetch(url, options = {}) {
+  const token = await getAccessToken();
+  const headers = { ...(options.headers ?? {}) };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return fetch(url, { ...options, headers });
+}
+
 async function loadTaskList() {
   try {
-    const r = await fetch('/api/tasks');
+    const r = await authedFetch('/api/tasks');
     if (r.ok) {
       const body = await r.json();
       return Array.isArray(body.tasks) ? body.tasks : [];
@@ -85,7 +95,7 @@ async function loadTaskList() {
 
 async function loadProgress() {
   try {
-    const r = await fetch('/api/progress');
+    const r = await authedFetch('/api/progress');
     if (r.ok) {
       const body = await r.json();
       if (Array.isArray(body.completed_task_ids)) {
@@ -129,7 +139,7 @@ async function persistAnnotation(task, annotation) {
     meta: task.meta ?? {},
   };
   try {
-    const r = await fetch('/api/annotations', {
+    const r = await authedFetch('/api/annotations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -158,7 +168,7 @@ function updateChrome() {
   mountStudio(task);
 }
 
-async function main() {
+async function startApp() {
   setStatus('Loading…');
   try {
     [tasks] = await Promise.all([loadTaskList(), loadProgress()]);
@@ -204,4 +214,4 @@ async function main() {
   });
 }
 
-main();
+initAuth(startApp);

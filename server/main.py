@@ -7,22 +7,26 @@ import os
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
+import jwt
 import psycopg2
 import psycopg2.extras
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
+SUPABASE_JWT_SECRET = os.environ.get("SUPABASE_JWT_SECRET", "")
+SUPABASE_URL = os.environ.get("VITE_SUPABASE_URL", "")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TASKS_PATH = REPO_ROOT / "public" / "tasks.json"
 
-app = FastAPI(title="audio-label", version="0.2.0")
+app = FastAPI(title="audio-label", version="0.3.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -47,6 +51,17 @@ def _create_schema() -> None:
                     meta          JSONB NOT NULL DEFAULT '{}'
                 );
             """)
+            cur.execute("""
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = 'annotations' AND column_name = 'user_id'
+                    ) THEN
+                        ALTER TABLE annotations ADD COLUMN user_id TEXT;
+                    END IF;
+                END $$;
+            """)
         conn.commit()
 
 
@@ -62,6 +77,34 @@ def _db():
         yield conn
     finally:
         conn.close()
+
+
+def _require_user(request: Request) -> str:
+    """Extract and verify the Supabase JWT; return the user_id (sub claim)."""
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing Authorization header")
+    token = auth[len("Bearer "):]
+
+    if not SUPABASE_JWT_SECRET:
+        raise HTTPException(status_code=500, detail="SUPABASE_JWT_SECRET not configured")
+
+    try:
+        payload = jwt.decode(
+            token,
+            SUPABASE_JWT_SECRET,
+            algorithms=["HS256"],
+            options={"verify_aud": False},
+        )
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(status_code=401, detail=f"Invalid token: {e}")
+
+    user_id: Optional[str] = payload.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Token missing sub claim")
+    return user_id
 
 
 class AnnotationIn(BaseModel):
@@ -82,7 +125,8 @@ def _load_tasks_raw() -> dict:
 
 
 @app.get("/api/tasks")
-def list_tasks() -> dict:
+def list_tasks(request: Request) -> dict:
+    _require_user(request)
     data = _load_tasks_raw()
     tasks = data.get("tasks")
     if not isinstance(tasks, list):
@@ -91,18 +135,24 @@ def list_tasks() -> dict:
 
 
 @app.get("/api/progress")
-def get_progress() -> dict:
+def get_progress(request: Request) -> dict:
+    user_id = _require_user(request)
     if not DATABASE_URL:
         return {"completed_task_ids": []}
     with _db() as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT DISTINCT task_id FROM annotations ORDER BY task_id;")
+            cur.execute(
+                "SELECT DISTINCT task_id FROM annotations WHERE user_id = %s ORDER BY task_id;",
+                (user_id,),
+            )
             rows = cur.fetchall()
     return {"completed_task_ids": [row[0] for row in rows]}
 
 
 @app.post("/api/annotations")
-def save_annotation(body: AnnotationIn) -> dict:
+def save_annotation(body: AnnotationIn, request: Request) -> dict:
+    user_id = _require_user(request)
+
     task_ids = {t.get("id") for t in _load_tasks_raw().get("tasks", []) if isinstance(t, dict)}
     if body.task_id not in task_ids:
         raise HTTPException(status_code=400, detail=f"Unknown task_id: {body.task_id!r}")
@@ -117,8 +167,8 @@ def save_annotation(body: AnnotationIn) -> dict:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                INSERT INTO annotations (submitted_at, export_version, task_id, annotation, meta)
-                VALUES (%s, %s, %s, %s::jsonb, %s::jsonb)
+                INSERT INTO annotations (submitted_at, export_version, task_id, annotation, meta, user_id)
+                VALUES (%s, %s, %s, %s::jsonb, %s::jsonb, %s)
                 RETURNING id;
                 """,
                 (
@@ -127,6 +177,7 @@ def save_annotation(body: AnnotationIn) -> dict:
                     body.task_id,
                     annotation_json,
                     meta_json,
+                    user_id,
                 ),
             )
             row_id = cur.fetchone()[0]
