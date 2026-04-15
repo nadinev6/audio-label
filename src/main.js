@@ -1,13 +1,9 @@
 import LabelStudio from '@heartexlabs/label-studio';
 import '@heartexlabs/label-studio/build/static/css/main.css';
 
-/** Bump when you change label config shapes that downstream must interpret. */
 const EXPORT_VERSION = 1;
+const SESSION_KEY = 'audio-label-index';
 
-/**
- * Edit this XML to match your taxonomy (keep names stable for pipeline joins).
- * @see https://labelstud.io/tags
- */
 const LABEL_CONFIG = `
   <View>
     <AudioPlus name="audio" value="$audio"/>
@@ -23,9 +19,6 @@ const LS_OPTIONS = {
   interfaces: ['controls', 'submit'],
 };
 
-/**
- * Label Studio 1.x expects an empty annotation to be created on load for editing.
- */
 function onLabelStudioLoad(LS) {
   const created = LS.annotationStore.addAnnotation({ userGenerate: true });
   LS.annotationStore.selectAnnotation(created.id);
@@ -34,6 +27,7 @@ function onLabelStudioLoad(LS) {
 let tasks = [];
 let index = 0;
 let studio = null;
+let completedTaskIds = new Set();
 
 function setStatus(text, isError = false) {
   const el = document.getElementById('status');
@@ -41,9 +35,32 @@ function setStatus(text, isError = false) {
   el.style.color = isError ? '#f85149' : '#8b949e';
 }
 
+function showBanner(text, isError = false) {
+  const banner = document.getElementById('save-banner');
+  banner.textContent = text;
+  banner.style.background = isError ? '#3d1a1a' : '#0d2b1a';
+  banner.style.color = isError ? '#f85149' : '#3fb950';
+  banner.style.borderColor = isError ? '#f85149' : '#3fb950';
+  banner.style.opacity = '1';
+  clearTimeout(banner._timer);
+  banner._timer = setTimeout(() => {
+    banner.style.opacity = '0';
+  }, 3000);
+}
+
+function updateProgressBar() {
+  const count = completedTaskIds.size;
+  const total = tasks.length;
+  const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+  document.getElementById('progress-text').textContent = `${count} / ${total} annotated`;
+  document.getElementById('progress-fill').style.width = `${pct}%`;
+}
+
 function taskMetaLine(task) {
   if (!task) return '';
-  const parts = [`${index + 1} / ${tasks.length || 0}`, `id: ${task.id}`];
+  const done = completedTaskIds.has(task.id);
+  const checkmark = done ? ' ✓' : '';
+  const parts = [`${index + 1} / ${tasks.length || 0}`, `id: ${task.id}${checkmark}`];
   if (task.meta && Object.keys(task.meta).length) {
     parts.push(JSON.stringify(task.meta));
   }
@@ -64,6 +81,20 @@ async function loadTaskList() {
   if (!r.ok) throw new Error(`tasks unavailable (${r.status})`);
   const body = await r.json();
   return Array.isArray(body.tasks) ? body.tasks : [];
+}
+
+async function loadProgress() {
+  try {
+    const r = await fetch('/api/progress');
+    if (r.ok) {
+      const body = await r.json();
+      if (Array.isArray(body.completed_task_ids)) {
+        completedTaskIds = new Set(body.completed_task_ids);
+      }
+    }
+  } catch {
+    // Progress unavailable; start fresh
+  }
 }
 
 function mountStudio(task) {
@@ -104,14 +135,16 @@ async function persistAnnotation(task, annotation) {
       body: JSON.stringify(payload),
     });
     if (r.ok) {
-      setStatus('Saved');
+      completedTaskIds.add(task.id);
+      updateProgressBar();
+      updateChrome();
+      showBanner('Saved to database');
       return;
     }
-    setStatus(`Save failed: HTTP ${r.status}`, true);
+    showBanner(`Save failed: HTTP ${r.status}`, true);
   } catch {
-    setStatus('Save failed (is the API running?)', true);
+    showBanner('Save failed (is the API running?)', true);
   }
-  // Fallback: still log so work is not silently lost during bring-up
   console.warn('Annotation (copy if needed):', payload);
 }
 
@@ -120,13 +153,15 @@ function updateChrome() {
   document.getElementById('task-meta').textContent = taskMetaLine(task);
   document.getElementById('btn-prev').disabled = index <= 0;
   document.getElementById('btn-next').disabled = index >= tasks.length - 1;
+  document.getElementById('btn-skip').disabled = index >= tasks.length - 1;
+  try { sessionStorage.setItem(SESSION_KEY, String(index)); } catch { /* ignore */ }
   mountStudio(task);
 }
 
 async function main() {
-  setStatus('Loading tasks…');
+  setStatus('Loading…');
   try {
-    tasks = await loadTaskList();
+    [tasks] = await Promise.all([loadTaskList(), loadProgress()]);
   } catch (e) {
     setStatus(e.message || 'Failed to load tasks', true);
     document.getElementById('root').innerHTML = `
@@ -142,8 +177,17 @@ async function main() {
       '<p style="padding:1rem;color:#8b949e;">Add tasks to <code>tasks.json</code> (see README).</p>';
     return;
   }
-  index = 0;
+
+  const saved = parseInt(sessionStorage.getItem(SESSION_KEY) ?? '', 10);
+  if (!isNaN(saved) && saved >= 0 && saved < tasks.length) {
+    index = saved;
+  } else {
+    const firstIncomplete = tasks.findIndex(t => !completedTaskIds.has(t.id));
+    index = firstIncomplete === -1 ? 0 : firstIncomplete;
+  }
+
   setStatus('');
+  updateProgressBar();
   updateChrome();
 
   document.getElementById('btn-prev').addEventListener('click', () => {
@@ -151,6 +195,10 @@ async function main() {
     updateChrome();
   });
   document.getElementById('btn-next').addEventListener('click', () => {
+    index = Math.min(tasks.length - 1, index + 1);
+    updateChrome();
+  });
+  document.getElementById('btn-skip').addEventListener('click', () => {
     index = Math.min(tasks.length - 1, index + 1);
     updateChrome();
   });

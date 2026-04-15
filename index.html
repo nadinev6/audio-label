@@ -30,10 +30,15 @@
         border: 1px solid #30363d;
         border-radius: 6px;
         padding: 0.35rem 0.75rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
       }
       #chrome button:disabled {
         opacity: 0.45;
         cursor: not-allowed;
+      }
+      #btn-skip {
+        color: #8b949e;
       }
       #task-meta {
         flex: 1;
@@ -42,13 +47,56 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        color: #c9d1d9;
       }
       #status {
         font-size: 0.85rem;
         color: #8b949e;
+        white-space: nowrap;
+      }
+      #progress-bar-wrap {
+        background: #161b22;
+        border-bottom: 1px solid #30363d;
+        padding: 0 1rem 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      #progress-track {
+        flex: 1;
+        height: 4px;
+        background: #30363d;
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      #progress-fill {
+        height: 100%;
+        width: 0%;
+        background: #3fb950;
+        border-radius: 2px;
+        transition: width 0.3s ease;
+      }
+      #progress-text {
+        font-size: 0.78rem;
+        color: #8b949e;
+        white-space: nowrap;
+      }
+      #save-banner {
+        position: fixed;
+        bottom: 1.25rem;
+        right: 1.25rem;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        font-size: 0.875rem;
+        font-weight: 500;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 9999;
       }
       #root {
-        min-height: calc(100vh - 48px);
+        min-height: calc(100vh - 80px);
       }
     </style>
   </head>
@@ -56,10 +104,16 @@
     <div id="chrome">
       <button type="button" id="btn-prev" aria-label="Previous task">Prev</button>
       <button type="button" id="btn-next" aria-label="Next task">Next</button>
+      <button type="button" id="btn-skip" aria-label="Skip task">Skip</button>
       <div id="task-meta"></div>
       <div id="status"></div>
     </div>
+    <div id="progress-bar-wrap">
+      <div id="progress-track"><div id="progress-fill"></div></div>
+      <div id="progress-text">0 / 0 annotated</div>
+    </div>
     <div id="root"></div>
+    <div id="save-banner"></div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
