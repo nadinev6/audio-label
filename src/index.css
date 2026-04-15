@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;700&family=JetBrains+Mono:wght@300&display=swap');
+
+:root {
+  --bg-deep: #ffffff;
+  --ui-black: #050505;
+  --ui-grey: #666666;
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --font-main: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --surface: #161b22;
+  --surface-bg: #0f1419;
+  --border: #30363d;
+  --text-primary: #e6edf3;
+  --text-secondary: #c9d1d9;
+  --text-muted: #8b949e;
+  --accent: #3fb950;
+  --accent-hover: #2ea043;
+  --accent-bg: #238636;
+  --error: #f85149;
+  --error-bg: #3d1a1a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-deep);
+  color: var(--ui-black);
+}
+
+/* ── Mesh Background ── */
+.mesh-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  filter: blur(80px);
+  opacity: 0.25;
+}
+
+.mesh-ball {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+}
+
+.b1 { background: radial-gradient(circle, #4d00ff 0%, transparent 70%); top: -10%; left: -10%; }
+.b2 { background: radial-gradient(circle, #00d4ff 0%, transparent 70%); bottom: -10%; right: -10%; }
+.b3 { background: radial-gradient(circle, #ff00aa 0%, transparent 70%); top: 40%; left: 30%; }
+
+/* ── Login Overlay ── */
+#login-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.login-frame {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  height: 600px;
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: 0;
+  z-index: 10;
+}
+
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px;
+  border-left: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+}
+
+.hero-section h1 {
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: -4px;
+  color: var(--ui-black);
+}
+
+#login-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  padding: 60px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.05);
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.input-group label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ui-grey);
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.input-group input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--glass-border);
+  padding: 12px 0;
+  color: var(--ui-black);
+  font-size: 1rem;
+  font-family: var(--font-main);
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+  border-bottom-color: var(--ui-black);
+}
+
+#btn-signin {
+  display: block;
+  width: 100%;
+  background: var(--ui-black);
+  color: white;
+  border: none;
+  padding: 20px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+#btn-signin:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+#btn-signin:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#login-error {
+  display: none;
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: #fff0f0;
+  border: 1px solid var(--error);
+  font-size: 0.8rem;
+  color: var(--error);
+}
+
+/* ── App Shell ── */
+#app-shell {
+  display: none;
+  background: var(--surface-bg);
+  min-height: 100vh;
+  color: var(--text-primary);
+  font-family: system-ui, sans-serif;
+}
+
+#chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+#chrome button {
+  cursor: pointer;
+  background: #21262d;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+#chrome button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#btn-skip {
+  color: var(--text-muted);
+}
+
+#btn-signout {
+  margin-left: auto;
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+#btn-signout:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+#task-meta {
+  flex: 1;
+  font-size: 0.9rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+#status {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+#progress-bar-wrap {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+#progress-track {
+  flex: 1;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+#progress-text {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+#save-banner {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+#root {
+  min-height: calc(100vh - 80px);
+}
+
+@media (max-width: 900px) {
+  .login-frame {
+    grid-template-columns: 1fr;
+    height: auto;
+    padding: 20px;
+  }
+
+  .hero-section {
+    display: none;
+  }
+
+  #login-card {
+    padding: 40px 20px;
+  }
+}
