@@ -1,0 +1,173 @@
+:root {
+  /* --- Palette extracted from image_0.png --- */
+  /* Primary background gradient start */
+  --bg-top: #3D2D90; /* Deep blue-purple */
+  /* Primary background gradient end */
+  --bg-bottom: #C94CBB; /* Vibrant magenta-pink */
+  /* Highlight / Accent color for active elements */
+  --accent-blue: #0AC4FF; /* Electric light blue */
+  /* Warmer highlight from the gradient edge */
+  --accent-warm: #FFA35C; /* Soft orange-peach */
+  /* Surface colors (cards, sidebars) */
+  --surface-base: rgba(255, 255, 255, 0.03); /* Extremely faint tint for contrast */
+  /* Text colors */
+  --text-main: #FFFFFF;
+  --text-muted: rgba(255, 255, 255, 0.7);
+  
+  /* --- Theming Variables --- */
+  --main-gradient: linear-gradient(135deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --shadow-main: 0 4px 15px rgba(0, 0, 0, 0.2);
+  --border-radius-main: 6px; /* A slight corner for modernism */
+}
+
+/* --- Global & Layout --- */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Modern stack */
+  background: var(--main-gradient);
+  background-attachment: fixed; /* Keep gradient still behind scrolled content */
+  color: var(--text-main);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Navigation / Header --- */
+.ls-app-header {
+  background-color: transparent;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: none;
+  backdrop-filter: blur(5px); /* Soft blur for minimalist focus */
+}
+
+.ls-app-header__logo,
+.ls-app-header__title {
+  color: var(--text-main) !important;
+  font-weight: 600;
+}
+
+/* --- Main Workspace (Canvas) --- */
+.ls-main-view {
+  background-color: transparent;
+}
+
+/* --- Project and Task List Views --- */
+.ls-project-list, .ls-task-list {
+  background-color: var(--surface-base);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-main);
+  margin: 20px;
+  padding: 10px;
+}
+
+.ls-task-row {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ls-task-row:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.ls-task-id, .ls-task-title {
+  color: var(--text-main);
+}
+
+/* --- Sidebars & Toolbars --- */
+.ls-sidebar, .ls-toolbar {
+  background-color: rgba(0, 0, 0, 0.15); /* Slightly darker for panel separation */
+  border-color: var(--border-color);
+  color: var(--text-muted);
+}
+
+.ls-toolbar__item {
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.ls-toolbar__item:hover, .ls-toolbar__item_active {
+  color: var(--accent-blue);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Add a subtle highlight to the bottom of active sidebar items */
+.ls-sidebar__item_active {
+  color: var(--accent-warm) !important;
+  border-bottom: 2px solid var(--accent-warm);
+}
+
+/* --- Labeling Controls & Panels --- */
+.ls-label-studio {
+  background-color: transparent;
+}
+
+/* Controls like 'submit', 'skip', 'regions' */
+.ls-label-studio__controls {
+  margin-top: 15px;
+  background-color: transparent;
+}
+
+/* The panel showing created regions */
+.ls-regions-panel {
+  background-color: var(--surface-base);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-main);
+  color: var(--text-muted);
+}
+
+/* --- Labels (Color Palettes) --- */
+/* This is critical: assign specific, pleasing colors to the label tags. 
+   Label Studio assigns class numbers like .ls-label-1, .ls-label-2 */
+
+.ls-label {
+  border: 1px solid currentColor; /* Use text color as border */
+  border-radius: 4px;
+}
+
+.ls-label.ls-active {
+  box-shadow: 0 0 5px var(--accent-blue);
+}
+
+/* Set specific palette (example indices 1-4) */
+.ls-label-1 { color: #0AC4FF; } /* Blue */
+.ls-label-2 { color: #FFD2A8; } /* Light peach */
+.ls-label-3 { color: #FF66CC; } /* Bright pink */
+.ls-label-4 { color: #B0A0FF; } /* Lighter purple */
+
+/* --- Primary Action Buttons (Submit, etc.) --- */
+.ls-button {
+  border-radius: 30px; /* Pillow shape from image waves */
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.ls-button:active {
+  transform: translateY(1px);
+}
+
+/* The 'Submit' or primary action button - use a light variant of the main warm accent */
+.ls-button_primary {
+  background-color: #FFD2A8; /* Light warm accent from image */
+  color: #3D2D90; /* Contrast text from background */
+  box-shadow: 0 2px 5px rgba(255, 163, 92, 0.4);
+}
+
+.ls-button_primary:hover {
+  background-color: #FFE0C1; /* A bit brighter */
+  box-shadow: 0 4px 10px rgba(255, 163, 92, 0.6);
+}
+
+/* The 'Skip' button - minimalist and neutral */
+.ls-button_neutral {
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+.ls-button_neutral:hover {
+  color: var(--text-main);
+  border-color: rgba(255, 255, 255, 0.2);
+}
