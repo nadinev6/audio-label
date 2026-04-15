@@ -4,7 +4,200 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Audio label</title>
-    <link rel="stylesheet" href="/index.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #0f1419;
+        color: #e6edf3;
+      }
+
+      /* ── Login overlay ── */
+      #login-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: #0f1419;
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+      }
+      #login-card {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 2.5rem 2rem;
+        width: 100%;
+        max-width: 360px;
+      }
+      #login-card h1 {
+        margin: 0 0 0.25rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #e6edf3;
+      }
+      #login-card p {
+        margin: 0 0 1.75rem;
+        font-size: 0.85rem;
+        color: #8b949e;
+      }
+      #login-form label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #c9d1d9;
+        margin-bottom: 0.35rem;
+      }
+      #login-form input {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        background: #0f1419;
+        color: #e6edf3;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      #login-form input:focus {
+        border-color: #3fb950;
+      }
+      #btn-signin {
+        display: block;
+        width: 100%;
+        padding: 0.55rem;
+        background: #238636;
+        color: #fff;
+        border: 1px solid #2ea043;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      #btn-signin:hover:not(:disabled) {
+        background: #2ea043;
+      }
+      #btn-signin:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      #login-error {
+        display: none;
+        margin-top: 0.85rem;
+        padding: 0.5rem 0.75rem;
+        background: #3d1a1a;
+        border: 1px solid #f85149;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        color: #f85149;
+      }
+
+      /* ── App shell ── */
+      #app-shell {
+        display: none;
+      }
+      #chrome {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #30363d;
+        background: #161b22;
+      }
+      #chrome button {
+        cursor: pointer;
+        background: #21262d;
+        color: #e6edf3;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+      }
+      #chrome button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      #btn-skip {
+        color: #8b949e;
+      }
+      #btn-signout {
+        margin-left: auto;
+        background: transparent;
+        border-color: #30363d;
+        color: #8b949e;
+        font-size: 0.8rem;
+      }
+      #btn-signout:hover {
+        color: #e6edf3;
+        border-color: #8b949e;
+      }
+      #task-meta {
+        flex: 1;
+        font-size: 0.9rem;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #c9d1d9;
+      }
+      #status {
+        font-size: 0.85rem;
+        color: #8b949e;
+        white-space: nowrap;
+      }
+      #progress-bar-wrap {
+        background: #161b22;
+        border-bottom: 1px solid #30363d;
+        padding: 0 1rem 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      #progress-track {
+        flex: 1;
+        height: 4px;
+        background: #30363d;
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      #progress-fill {
+        height: 100%;
+        width: 0%;
+        background: #3fb950;
+        border-radius: 2px;
+        transition: width 0.3s ease;
+      }
+      #progress-text {
+        font-size: 0.78rem;
+        color: #8b949e;
+        white-space: nowrap;
+      }
+      #save-banner {
+        position: fixed;
+        bottom: 1.25rem;
+        right: 1.25rem;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        font-size: 0.875rem;
+        font-weight: 500;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 9999;
+      }
+      #root {
+        min-height: calc(100vh - 80px);
+      }
+    </style>
   </head>
   <body>
     <!-- Login overlay -->
