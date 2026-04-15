@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUDIO LABEL - Authentication</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;700&amp;family=JetBrains+Mono:wght@300&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #ffffff;
+            --ui-black: #050505;
+            --ui-grey: #666666;
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--ui-black);
+            font-family: var(--font-main);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- STATIC MESH BACKGROUND --- */
+        .mesh-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            filter: blur(80px);
+            opacity: 0.25;
+        }
+
+        .mesh-ball {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+        }
+
+        .b1 { background: radial-gradient(circle, #4d00ff 0%, transparent 70%); top: -10%; left: -10%; }
+        .b2 { background: radial-gradient(circle, #00d4ff 0%, transparent 70%); bottom: -10%; right: -10%; }
+        .b3 { background: radial-gradient(circle, #ff00aa 0%, transparent 70%); top: 40%; left: 30%; }
+
+        /* --- LAYOUT STRUCTURE --- */
+        .login-frame {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            height: 600px;
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 0;
+            z-index: 10;
+        }
+
+        /* Hero Side */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            border-left: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+        }
+
+        .hero-section h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -4px;
+            color: var(--ui-black);
+        }
+
+        /* Form Side */
+        .login-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            padding: 60px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.05);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .input-group label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem; /* Increased slightly for mixed case readability */
+            color: var(--ui-grey);
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--glass-border);
+            padding: 12px 0;
+            color: var(--ui-black);
+            font-size: 1rem;
+            font-family: var(--font-main);
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-bottom-color: var(--ui-black);
+        }
+
+        .btn-submit {
+            background: var(--ui-black);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 900px) {
+            .login-frame {
+                grid-template-columns: 1fr;
+                height: auto;
+                padding: 20px;
+            }
+            .hero-section { display: none; }
+            .login-card { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-container">
+        <div class="mesh-ball b1"></div>
+        <div class="mesh-ball b2"></div>
+        <div class="mesh-ball b3"></div>
+    </div>
+
+    <div class="login-frame">
+        <div class="hero-section">
+            <h1>AUDIO<br>LABEL</h1>
+        </div>
+
+        <div class="login-card">
+            <form id="login-form">
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="email@example.com" autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="••••••••" autocomplete="off">
+                </div>
+
+                <button type="submit" class="btn-submit">Sign In</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
