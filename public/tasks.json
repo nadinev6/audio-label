@@ -3,7 +3,7 @@
     {
       "id": "test-speech-1",
       "data": {
-        "audio": "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3"
+        "audio": "https://github.com/mdn/learning-area/raw/refs/heads/main/html/multimedia-and-embedding/tasks/media-embed/media/audio.mp3"
       },
       "meta": {
         "title": "Test speech sample (MDN CC0)",
