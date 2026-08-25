@@ -1,4 +1,4 @@
-import { supabase } from './supabase.js';
+// Dev-mode auth: any login bypasses Supabase. Swap to real auth when you set up Supabase.
 
 export function getLoginOverlay() {
   return document.getElementById('login-overlay');
@@ -6,6 +6,34 @@ export function getLoginOverlay() {
 
 export function getAppShell() {
   return document.getElementById('app-shell');
+}
+
+export async function getAccessToken() {
+  // Return a dummy token that the FastAPI dev server will accept
+  return Promise.resolve('dev-token');
+}
+
+export function initAuth(onAuthenticated) {
+  const form = document.getElementById('login-form');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    if (!email || !password) {
+      document.getElementById('login-error').textContent = 'Enter email and password';
+      document.getElementById('login-error').style.display = 'block';
+      return;
+    }
+    showApp();
+    onAuthenticated();
+  });
+
+  document.getElementById('btn-signout').addEventListener('click', () => {
+    showLogin();
+  });
+
+  showLogin();
 }
 
 function showLogin() {
@@ -16,71 +44,4 @@ function showLogin() {
 function showApp() {
   getLoginOverlay().style.display = 'none';
   getAppShell().style.display = 'block';
-}
-
-function setLoginError(msg) {
-  const el = document.getElementById('login-error');
-  el.textContent = msg;
-  el.style.display = msg ? 'block' : 'none';
-}
-
-function setLoginLoading(loading) {
-  const btn = document.getElementById('btn-signin');
-  btn.disabled = loading;
-  btn.textContent = loading ? 'Signing in…' : 'Sign in';
-}
-
-export async function getSession() {
-  const { data } = await supabase.auth.getSession();
-  return data.session;
-}
-
-export async function getAccessToken() {
-  const session = await getSession();
-  return session?.access_token ?? null;
-}
-
-export function initAuth(onAuthenticated) {
-  const form = document.getElementById('login-form');
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    setLoginError('');
-    setLoginLoading(true);
-
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-    setLoginLoading(false);
-
-    if (error) {
-      setLoginError(error.message);
-      return;
-    }
-
-    showApp();
-    onAuthenticated();
-  });
-
-  document.getElementById('btn-signout').addEventListener('click', async () => {
-    await supabase.auth.signOut();
-    showLogin();
-  });
-
-  supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_OUT' || !session) {
-      showLogin();
-    }
-  });
-
-  getSession().then((session) => {
-    if (session) {
-      showApp();
-      onAuthenticated();
-    } else {
-      showLogin();
-    }
-  });
 }

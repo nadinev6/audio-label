@@ -1,20 +1,19 @@
 {
   "name": "audio-label",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.4.0",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/nadinev6/audio-label.git"
   },
-  "description": "Minimal audio labeling UI (embeds @heartexlabs/label-studio) plus optional JSONL export API",
+  "description": "Multi-team audio labeling platform: Algolia-backed segment import, custom review UI, IAA/QA, Arweave export",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@heartexlabs/label-studio": "1.4.0",
     "@supabase/supabase-js": "^2.103.1"
   },
   "devDependencies": {

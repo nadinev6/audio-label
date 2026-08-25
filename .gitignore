@@ -4,9 +4,11 @@ dist/
 .DS_Store
 *.log
 data/*.jsonl
+data/*.db
 .venv/
 venv/
 __pycache__/
 *.pyc
 .env
 .env.*
+.kilo/
